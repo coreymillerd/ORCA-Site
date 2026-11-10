@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORCA CMMS</title>
+<meta name="description" content="ORCA is a mobile maintenance management system built by a maintenance professional: trouble calls, parts inventory, preventive maintenance, and parts and PM template sharing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a shop-floor work order. Condensed stencil headings, a safety-yellow tag as the only loud color, a sample trouble ticket as the hero. */
+:root {
+  --ink: #0e2233;
+  --paper: #f3f5f7;
+  --card: #ffffff;
+  --tag: #f5b700;
+  --steel: #556575;
+  --line: #d3dae1;
+  --band: #0e2233;
+  --band-ink: #eef2f5;
+  --display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e9eef2; --paper: #0b1620; --card: #12212e; --steel: #9aabb9; --line: #26384a;
+    --band: #060d14; --band-ink: #e9eef2; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #e9eef2; --paper: #0b1620; --card: #12212e; --steel: #9aabb9; --line: #26384a;
+  --band: #060d14; --band-ink: #e9eef2; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--tag); outline-offset: 3px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.02; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.7rem, 7.4vw, 5rem); }
+h2 { font-size: clamp(2rem, 4.6vw, 3rem); }
+h3 { font-size: 1.45rem; line-height: 1.1; }
+p { margin: 0; }
+.lede { font-size: 1.15rem; max-width: 60ch; color: var(--steel); }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; font: 600 1rem var(--body); text-decoration: none; border: 2px solid var(--ink); border-radius: 4px; }
+.btn.primary { background: var(--tag); border-color: var(--tag); color: #0e2233; }
+.btn.primary:hover { filter: brightness(0.95); }
+.btn.ghost:hover { background: var(--ink); color: var(--paper); }
+
+/* top bar */
+header { border-bottom: 2px solid var(--ink); }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 700; font-size: 1.9rem; letter-spacing: 0.08em; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand i { width: 14px; height: 14px; background: var(--tag); display: inline-block; border: 2px solid var(--ink); border-radius: 50%; }
+nav { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; font-weight: 500; font-size: 0.95rem; }
+nav a { text-decoration: none; }
+nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+nav .btn { padding: 8px 16px; font-size: 0.95rem; }
+
+/* hero */
+.hero { padding: 56px 0 64px; }
+.hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+.eyebrow { font: 500 0.8rem var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--steel); margin-bottom: 14px; }
+.hero h1 span { background: linear-gradient(transparent 62%, var(--tag) 62%); }
+.hero .lede { margin: 22px 0 28px; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.note { margin-top: 16px; font-size: 0.9rem; color: var(--steel); }
+
+.ticket { background: var(--card); border: 2px solid var(--ink); border-radius: 6px; box-shadow: 8px 8px 0 var(--tag); }
+.ticket-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 2px solid var(--ink); font: 500 0.82rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.down { background: #c8321f; color: #fff; padding: 2px 8px; border-radius: 3px; }
+.ticket dl { margin: 0; padding: 6px 16px 14px; display: grid; grid-template-columns: 110px 1fr; }
+.ticket dt, .ticket dd { padding: 9px 0; border-bottom: 1px dashed var(--line); margin: 0; font-size: 0.95rem; }
+.ticket dt { font: 500 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--steel); padding-top: 12px; }
+.ticket dd:last-of-type, .ticket dt:last-of-type { border-bottom: 0; }
+.mono { font-family: var(--mono); font-weight: 500; }
+.ticket-foot { padding: 10px 16px; border-top: 2px solid var(--ink); font-size: 0.8rem; color: var(--steel); }
+
+/* sections */
+section { padding: 72px 0; }
+.sec-head { margin-bottom: 36px; display: grid; gap: 14px; }
+.band { background: var(--band); color: var(--band-ink); }
+.band .lede, .band .eyebrow { color: #a9b9c6; }
+.story { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: start; }
+.story p + p { margin-top: 16px; }
+.story .big { font-family: var(--display); font-weight: 700; font-size: clamp(1.7rem, 3.6vw, 2.5rem); line-height: 1.08; text-transform: uppercase; }
+.story .big em { font-style: normal; color: var(--tag); }
+
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--ink); border-radius: 4px; padding: 22px; display: grid; gap: 10px; align-content: start; }
+.feature p { color: var(--steel); font-size: 0.97rem; }
+.feature.key { border-top-color: var(--tag); }
+
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.col { border: 2px solid var(--ink); border-radius: 6px; background: var(--card); }
+.col h3 { padding: 14px 18px; border-bottom: 2px solid var(--ink); }
+.col.orca h3 { background: var(--tag); color: #0e2233; }
+.col ul { list-style: none; margin: 0; padding: 6px 18px 12px; }
+.col li { padding: 11px 0; border-bottom: 1px dashed var(--line); font-size: 0.97rem; }
+.col li:last-child { border-bottom: 0; }
+
+.share { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.share .panel { border: 1px solid #2a4258; border-radius: 6px; padding: 26px; display: grid; gap: 12px; align-content: start; background: rgba(255,255,255,0.03); }
+.share .panel p { color: #c3d0da; }
+.share .tagline { font: 500 0.8rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--tag); }
+
+.roles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.role { border-left: 4px solid var(--tag); padding: 4px 0 4px 16px; }
+.role p { color: var(--steel); font-size: 0.95rem; margin-top: 6px; }
+
+.toggle { display: inline-flex; border: 2px solid var(--ink); border-radius: 4px; overflow: hidden; margin-bottom: 26px; }
+.toggle button { font: 600 0.95rem var(--body); padding: 9px 18px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.toggle button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.plan { background: var(--card); border: 2px solid var(--ink); border-radius: 6px; padding: 22px; display: grid; gap: 12px; align-content: start; }
+.plan.pop { box-shadow: 6px 6px 0 var(--tag); }
+.price { font-family: var(--display); font-weight: 700; font-size: 2.8rem; line-height: 1; }
+.price small { font: 400 0.95rem var(--body); color: var(--steel); }
+.plan ul { list-style: none; padding: 0; margin: 0; font-size: 0.94rem; }
+.plan li { padding: 7px 0; border-top: 1px dashed var(--line); }
+.plan .free-note { color: var(--steel); font-size: 0.88rem; }
+.fine { margin-top: 18px; font-size: 0.9rem; color: var(--steel); }
+
+.about { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 48px; }
+.about p + p { margin-top: 16px; }
+.sign { font: 500 0.85rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--steel); margin-top: 20px; }
+
+.final { text-align: left; }
+.final .cta { margin-top: 24px; }
+footer { border-top: 2px solid var(--ink); padding: 26px 0 40px; font-size: 0.92rem; color: var(--steel); }
+.foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.foot nav { font-size: 0.92rem; }
+
+@media (max-width: 920px) {
+  .hero-grid, .story, .about, .share, .vs { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr 1fr; }
+  .plans { grid-template-columns: 1fr 1fr; }
+  .roles { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  section { padding: 52px 0; }
+  .features, .plans, .roles { grid-template-columns: 1fr; }
+  .ticket dl { grid-template-columns: 96px 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="ORCA home"><i></i>ORCA</a>
+    <nav aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#different">Why ORCA</a>
+      <a href="#sharing">Sharing</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#about">About</a>
+      <a class="btn ghost" href="https://app.orcacmms.com">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Organizational Reliability and Cell Analytics</p>
+      <h1>Maintenance software from someone who has <span>carried the wrench.</span></h1>
+      <p class="lede">ORCA is a mobile CMMS built only for maintenance: trouble calls, parts inventory and preventive maintenance in one place, priced so a department that is already a cost can afford it.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://app.orcacmms.com">Log in to ORCA</a>
+        <a class="btn ghost" href="#pricing">See plans</a>
+      </div>
+      <p class="note">Free plan available. Email <a href="mailto:support@orcacmms.com">support@orcacmms.com</a> and I will set your company up.</p>
+    </div>
+    <div>
+      <div class="ticket" role="img" aria-label="Sample ORCA trouble call with asset, hours, parts and notes">
+        <div class="ticket-head"><span>Trouble call #1042</span><span class="down">Machine down</span></div>
+        <dl>
+          <dt>Asset</dt><dd>CNC Mill 3</dd>
+          <dt>Reported by</dt><dd>Operator, 2nd shift</dd>
+          <dt>Issue</dt><dd>Spindle drive belt slipping under load.</dd>
+          <dt>Repair hrs</dt><dd class="mono">2.5 h</dd>
+          <dt>Parts used</dt><dd><span class="mono">DB-553</span> Drive Belt &times; 1</dd>
+          <dt>Tech note</dt><dd>Belt glazed. Replaced, re-tensioned, test cut OK.</dd>
+          <dt>Photos</dt><dd>2 attached</dd>
+        </dl>
+        <div class="ticket-foot">Sample ticket. One tap prints the full report, with notes, messages, photos and hours.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="band" id="story">
+  <div class="wrap story">
+    <p class="big">Maintenance is a cost center. The software should <em>not</em> be one too.</p>
+    <div>
+      <p>Over 30 years I worked as a technician and a manager in automation, aviation, machine shops and general manufacturing. The hardest part was always the same: keeping track of the equipment.</p>
+      <p>I tested one CMMS after another. Most were an add-on to some other piece of software, so maintenance was never the main focus, and the price was hard to justify for a department that already costs the company money.</p>
+      <p>So I built ORCA around the people who actually do the work: operators who report a problem, technicians who fix it, and managers who need to see what is down and what it cost.</p>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">What is in the box</p>
+      <h2>Everything a maintenance floor runs on</h2>
+      <p class="lede">Works on a phone, tablet or computer. Install it to the home screen and it opens like an app.</p>
+    </div>
+    <div class="features">
+      <div class="feature key"><h3>Trouble calls</h3><p>Operators report a problem in seconds, with a machine-down flag so urgent work stands out. Technicians update status, add notes and close it out.</p></div>
+      <div class="feature"><h3>Assets and hours</h3><p>Every machine in one list. Operators log running hours with a single tap on the asset.</p></div>
+      <div class="feature"><h3>Preventive maintenance</h3><p>Build PM tasks for each asset, or start from a ready-made template and adjust it.</p></div>
+      <div class="feature key"><h3>Parts inventory</h3><p>Part numbers, quantities on hand, reorder points and shelf locations. Import your whole list from a spreadsheet.</p></div>
+      <div class="feature"><h3>Parts linked to repairs</h3><p>Record the parts used on each ticket and tie parts to the assets that use them, so history builds itself.</p></div>
+      <div class="feature"><h3>Notes, photos and messages</h3><p>Every ticket keeps its own repair hours, technician notes, pictures and message thread, with the author on each entry.</p></div>
+      <div class="feature"><h3>Printable repair reports</h3><p>Open any past ticket and print or save a full PDF report with hours, parts, notes, photos and messages.</p></div>
+      <div class="feature"><h3>Roles that make sense</h3><p>Admin, manager, technician and operator. Each person sees the screens they need and nothing that gets in the way.</p></div>
+      <div class="feature"><h3>Your data stays yours</h3><p>Each company is kept separate from every other company. Only what you choose to share is ever visible to anyone else.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="sharing">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">What most systems leave out</p>
+      <h2>Share the work, not just the data</h2>
+      <p class="lede">Two ORCA features are built around a simple idea: nobody should have to start from scratch or sit on parts someone else needs.</p>
+    </div>
+    <div class="share">
+      <div class="panel"><span class="tagline">Parts sharing</span><h3>Find the part before you buy it</h3><p>Choose which parts you are willing to share. Other ORCA companies can search the shared inventory and send a request, so a rare belt or filter does not mean a week of downtime. You control what is visible, and nothing is shared until you turn it on.</p></div>
+      <div class="panel"><span class="tagline">PM template sharing</span><h3>Start from a template that already works</h3><p>The ORCA Library holds ready-made PM templates, such as Fanuc machines, that you can copy to your own assets. Use them as they are, or adjust them for your shop.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="different">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">How ORCA is different</p>
+      <h2>Built for maintenance first</h2>
+    </div>
+    <div class="vs">
+      <div class="col"><h3>Typical CMMS</h3>
+        <ul>
+          <li>An add-on to other software, so maintenance is not the main focus</li>
+          <li>Priced for large enterprises, hard to justify for a cost center</li>
+          <li>Heavy screens that technicians avoid on the floor</li>
+          <li>Each company works alone, with parts and PM plans kept in separate silos</li>
+        </ul>
+      </div>
+      <div class="col orca"><h3>ORCA</h3>
+        <ul>
+          <li>Maintenance is the whole product, designed by a maintenance professional</li>
+          <li>A Free plan, then simple monthly or yearly pricing that grows with your asset count</li>
+          <li>Mobile first, with simple screens for operators and technicians</li>
+          <li>Parts sharing and PM template sharing between companies, on your terms</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roles" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Who uses it</p>
+      <h2>One tool, four jobs</h2>
+    </div>
+    <div class="roles">
+      <div class="role"><h3>Operator</h3><p>Reports problems and logs machine hours.</p></div>
+      <div class="role"><h3>Technician</h3><p>Works the tickets, adds notes, photos, hours and parts.</p></div>
+      <div class="role"><h3>Manager</h3><p>Watches what is down, assigns work and reviews history.</p></div>
+      <div class="role"><h3>Admin</h3><p>Manages users, plan and company settings.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" style="background: var(--card); border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Pricing</p>
+      <h2>Pick the size of your floor</h2>
+      <p class="lede">Plans are by number of assets. Cancel any time from inside the app. Your account then moves to the Free plan.</p>
+    </div>
+    <div class="toggle" role="group" aria-label="Billing period">
+      <button type="button" id="btn-month" aria-pressed="true">Monthly</button>
+      <button type="button" id="btn-year" aria-pressed="false">Yearly (2 months free)</button>
+    </div>
+    <div class="plans">
+      <div class="plan"><h3>Free</h3><div class="price">$0</div>
+        <ul><li>5 assets</li><li>1 admin, 1 technician, 1 operator</li><li>Trouble calls and asset hours</li></ul>
+        <p class="free-note">No inventory, photos, messaging, library or parts sharing.</p></div>
+      <div class="plan"><h3>Starter</h3><div class="price"><span class="amt" data-m="49" data-y="490">$49</span> <small class="per">/ month</small></div>
+        <ul><li>20 assets</li><li>1 admin, 1 manager</li><li>3 technicians</li><li>Inventory, photos, messaging, library, parts sharing</li></ul></div>
+      <div class="plan pop"><h3>Growth</h3><div class="price"><span class="amt" data-m="129" data-y="1290">$129</span> <small class="per">/ month</small></div>
+        <ul><li>100 assets</li><li>1 admin, 2 managers</li><li>8 technicians</li><li>Everything in Starter</li></ul></div>
+      <div class="plan"><h3>Pro</h3><div class="price"><span class="amt" data-m="249" data-y="2490">$249</span> <small class="per">/ month</small></div>
+        <ul><li>200 assets</li><li>2 admins, 2 managers</li><li>12 technicians</li><li>Everything in Starter</li></ul></div>
+    </div>
+    <p class="fine">Prices in US dollars. Applicable taxes are added at checkout. Need more than 200 assets? Email <a href="mailto:support@orcacmms.com">support@orcacmms.com</a>.</p>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <div>
+      <p class="eyebrow">About</p>
+      <h2>Built by a maintenance professional</h2>
+    </div>
+    <div>
+      <p>ORCA comes from more than 30 years in maintenance, in technician and management roles across automation, aviation, machine shops and general manufacturing. I am a disabled veteran, and I built ORCA because I got tired of software that was not made for the people turning the wrenches.</p>
+      <p>It is a small, focused product, and it improves with real shop feedback. If something does not work the way your floor works, tell me.</p>
+      <p class="sign">Corey D. Miller, Founder, ORCA Systems</p>
+    </div>
+  </div>
+</section>
+
+<section class="band final">
+  <div class="wrap">
+    <h2>Ready to get your floor set up?</h2>
+    <p class="lede" style="margin-top:14px">The Free plan covers up to 5 assets. Email me and I will create your company, then you can upgrade when your floor needs more.</p>
+    <div class="cta"><a class="btn primary" href="mailto:support@orcacmms.com">Email support@orcacmms.com</a>
+    <a class="btn ghost" style="border-color:var(--band-ink);color:var(--band-ink)" href="https://app.orcacmms.com">Log in</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p>&copy; 2026 ORCA Systems. All rights reserved.</p>
+    <nav aria-label="Legal">
+      <a href="/terms">Terms of Service</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="mailto:support@orcacmms.com">support@orcacmms.com</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var m = document.getElementById("btn-month"), y = document.getElementById("btn-year");
+  var fmt = function (n) { return "$" + n.toLocaleString("en-US"); };
+  function set(yearly) {
+    m.setAttribute("aria-pressed", String(!yearly));
+    y.setAttribute("aria-pressed", String(yearly));
+    document.querySelectorAll(".amt").forEach(function (el) {
+      el.textContent = fmt(Number(yearly ? el.dataset.y : el.dataset.m));
+    });
+    document.querySelectorAll(".per").forEach(function (el) { el.textContent = yearly ? "/ year" : "/ month"; });
+  }
+  m.addEventListener("click", function () { set(false); });
+  y.addEventListener("click", function () { set(true); });
+})();
+</script>
+</body>
+</html>
