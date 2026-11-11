@@ -175,7 +175,7 @@ footer { border-top: 2px solid var(--ink); padding: 26px 0 40px; font-size: 0.92
       <p class="lede">ORCA is a mobile CMMS built only for maintenance: trouble calls, parts inventory and preventive maintenance in one place, priced so a department that is already a cost can afford it.</p>
       <div class="cta">
         <a class="btn primary" href="https://app.orcacmms.com">Log in to ORCA</a>
-        <a class="btn ghost" href="#pricing">See plans</a>
+        <a class="btn ghost" href="#features">See features</a>
       </div>
       <p class="note">Free plan available. Email <a href="mailto:support@orcacmms.com">support@orcacmms.com</a> and I will set your company up.</p>
     </div>
@@ -261,7 +261,7 @@ footer { border-top: 2px solid var(--ink); padding: 26px 0 40px; font-size: 0.92
       <div class="col orca"><h3>ORCA</h3>
         <ul>
           <li>Maintenance is the whole product, designed by a maintenance professional</li>
-          <li>A Free plan, then simple monthly or yearly pricing that grows with your asset count</li>
+          <li>A Free plan to start, with simple paid plans coming soon that grow with your asset count</li>
           <li>Mobile first, with simple screens for operators and technicians</li>
           <li>Parts sharing and PM template sharing between companies, on your terms</li>
         </ul>
@@ -289,25 +289,15 @@ footer { border-top: 2px solid var(--ink); padding: 26px 0 40px; font-size: 0.92
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">Pricing</p>
-      <h2>Pick the size of your floor</h2>
-      <p class="lede">Plans are by number of assets. Cancel any time from inside the app. Your account then moves to the Free plan.</p>
+      <h2>Free to start. Paid plans coming soon.</h2>
+      <p class="lede">ORCA is open for early users on the Free plan. Paid plans for larger floors, priced by number of assets, are coming soon. Email me if you want to know when they are ready.</p>
     </div>
-    <div class="toggle" role="group" aria-label="Billing period">
-      <button type="button" id="btn-month" aria-pressed="true">Monthly</button>
-      <button type="button" id="btn-year" aria-pressed="false">Yearly (2 months free)</button>
-    </div>
-    <div class="plans">
+    <div class="plans" style="grid-template-columns: minmax(0, 360px);">
       <div class="plan"><h3>Free</h3><div class="price">$0</div>
         <ul><li>5 assets</li><li>1 admin, 1 technician, 1 operator</li><li>Trouble calls and asset hours</li></ul>
         <p class="free-note">No inventory, photos, messaging, library or parts sharing.</p></div>
-      <div class="plan"><h3>Starter</h3><div class="price"><span class="amt" data-m="49" data-y="490">$49</span> <small class="per">/ month</small></div>
-        <ul><li>20 assets</li><li>1 admin, 1 manager</li><li>3 technicians</li><li>Inventory, photos, messaging, library, parts sharing</li></ul></div>
-      <div class="plan pop"><h3>Growth</h3><div class="price"><span class="amt" data-m="129" data-y="1290">$129</span> <small class="per">/ month</small></div>
-        <ul><li>100 assets</li><li>1 admin, 2 managers</li><li>8 technicians</li><li>Everything in Starter</li></ul></div>
-      <div class="plan"><h3>Pro</h3><div class="price"><span class="amt" data-m="249" data-y="2490">$249</span> <small class="per">/ month</small></div>
-        <ul><li>200 assets</li><li>2 admins, 2 managers</li><li>12 technicians</li><li>Everything in Starter</li></ul></div>
     </div>
-    <p class="fine">Prices in US dollars. Applicable taxes are added at checkout. Need more than 200 assets? Email <a href="mailto:support@orcacmms.com">support@orcacmms.com</a>.</p>
+    <p class="fine">Need more than 5 assets, or want to talk about what you need? Email <a href="mailto:support@orcacmms.com">support@orcacmms.com</a>.</p>
   </div>
 </section>
 
@@ -328,7 +318,7 @@ footer { border-top: 2px solid var(--ink); padding: 26px 0 40px; font-size: 0.92
 <section class="band final">
   <div class="wrap">
     <h2>Ready to get your floor set up?</h2>
-    <p class="lede" style="margin-top:14px">The Free plan covers up to 5 assets. Email me and I will create your company, then you can upgrade when your floor needs more.</p>
+    <p class="lede" style="margin-top:14px">The Free plan covers up to 5 assets. Email me and I will create your company. Paid plans for larger floors are coming soon.</p>
     <div class="cta"><a class="btn primary" href="mailto:support@orcacmms.com">Email support@orcacmms.com</a>
     <a class="btn ghost" style="border-color:var(--band-ink);color:var(--band-ink)" href="https://app.orcacmms.com">Log in</a></div>
   </div>
@@ -346,21 +336,6 @@ footer { border-top: 2px solid var(--ink); padding: 26px 0 40px; font-size: 0.92
   </div>
 </footer>
 
-<script>
-(function () {
-  var m = document.getElementById("btn-month"), y = document.getElementById("btn-year");
-  var fmt = function (n) { return "$" + n.toLocaleString("en-US"); };
-  function set(yearly) {
-    m.setAttribute("aria-pressed", String(!yearly));
-    y.setAttribute("aria-pressed", String(yearly));
-    document.querySelectorAll(".amt").forEach(function (el) {
-      el.textContent = fmt(Number(yearly ? el.dataset.y : el.dataset.m));
-    });
-    document.querySelectorAll(".per").forEach(function (el) { el.textContent = yearly ? "/ year" : "/ month"; });
-  }
-  m.addEventListener("click", function () { set(false); });
-  y.addEventListener("click", function () { set(true); });
-})();
-</script>
+
 </body>
 </html>
